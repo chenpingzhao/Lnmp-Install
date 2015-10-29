@@ -20,12 +20,14 @@ files=(
 	"libtool-2.4.6.tar.gz http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz"
 	"libmcrypt-2.5.8.tar.gz http://downloads.sourceforge.net/mcrypt/libmcrypt-2.5.8.tar.gz"
 	"mcrypt-2.6.8.tar.gz http://downloads.sourceforge.net/mcrypt/mcrypt-2.6.8.tar.gz"
+	"gd-2.0.33.tar.gz http://www.boutell.com/gd/http/gd-2.0.33.tar.gz"
 	"php-5.4.45.tar.gz http://cn2.php.net/distributions/php-5.4.45.tar.gz"
 )
 
 function build() 
 {
 	make && make install && make clean
+	sleep 5
     echo -e "\033[32m Install Success!!!\033[0m\n"
 }
 
@@ -38,23 +40,32 @@ function getfile()
 	for ((i=0;i<$num;i++))
 	do
 		file=(${files[$i]})
+		filename=${file[0]}
 		[ -e ${file[0]} ] || wget -c ${file[1]}
-		#tar zxf $file[0]
+		[ -e ${filename%.tar.gz*} ] || tar zxf ${file[0]}
 	done
 }
 
 getfile
-exit
 ##########################################################################
+yum update -y
+yum install -y \
+gcc  gcc-c++  autoconf  libjpeg  libjpeg-devel  libpng  libpng-devel  freetype  \
+freetype-devel  libxml2  libxml2-devel  zlib  zlib-devel  glibc  glibc-devel  glib2  glib2-devel \
+bzip2  bzip2-devel  ncurses  ncurses-devel  curl  curl-devel  e2fsprogs  e2fsprogs-devel  krb5  \
+krb5-devel  libidn  libidn-devel  openssl  openssl-devel  openldap  openldap-devel  nss_ldap  \
+openldap-clients  openldap-servers  make  bison  cmake  lsof  rsync  vixie-cron  subversion  \
+pcre  pcre-devel  lrzsz  wget  vim-common  vim-enhanced  ntp  sudo  chkconfig  openssh*   \
+gd gd2 gd-devel gd2-devel systemtap-sdt-devel
 
+##########################################################################
 #install jpeg
 echo "install jpeg."
 
 cd $dir/jpeg-9
-./configure  --enable-shared --enable-static --prefix=/usr/local
-make && make install
-
+./configure  --enable-shared --enable-static --prefix=/usr/local >/dev/null 2>&1
 build
+
 ##########################################################################
 #install libpng
 echo "install libpng."
@@ -85,7 +96,6 @@ build
 ##########################################################################
 #install libtool
 echo "install libtool."
-
 cd $dir/libtool-2.4.6
 ./configure --prefix=/usr/local --enable-ltdl-install
 build
@@ -109,6 +119,12 @@ touch malloc.h
 /sbin/ldconfig
 ./configure --prefix=/usr/local --with-libmcrypt-prefix=/usr/local
 build
+
+##########################################################################
+#install gd2
+cd $dir/gd-2.0.33
+./configure --prefix=/usr/local/gd2
+make && make install
 
 ##########################################################################
 #install php
@@ -138,7 +154,7 @@ cd $dir/php-5.4.45
 --enable-fpm \
 --enable-mbstring \
 --with-mcrypt=/usr/local/lib \
---with-gd \
+--with-gd=/usr/local/gd2 \
 --enable-gd-native-ttf \
 --with-openssl \
 --with-mhash \
@@ -159,4 +175,3 @@ cp php.ini-development /etc/php.ini
 ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/lib/libmysqlclient.18.dylib
 mv /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 ln -s /usr/local/php/bin/*  /usr/bin
-
