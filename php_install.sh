@@ -50,7 +50,7 @@ exit
 #install jpeg
 echo "install jpeg."
 
-cd /usr/local/src/jpeg-9
+cd $dir/jpeg-9
 ./configure  --enable-shared --enable-static --prefix=/usr/local
 make && make install
 
@@ -59,14 +59,14 @@ build
 #install libpng
 echo "install libpng."
 
-cd /usr/local/src/libpng-1.6.2/
+cd $dir/libpng-1.6.2/
 ./configure --prefix=/usr/local
 build
 
 ##########################################################################
 #install freetype
 echo "install freetype."
-cd /usr/local/src/freetype-2.4.12/
+cd $dir/freetype-2.4.12/
 ./configure --prefix=/usr/local
 build
 
@@ -74,7 +74,7 @@ build
 #install libmcrypt
 echo "install libmcrypt."
 
-cd /usr/local/src/libmcrypt-2.5.8/
+cd $dir/libmcrypt-2.5.8/
 ./configure --prefix=/usr/local
 make && make install
 /sbin/ldconfig
@@ -86,7 +86,7 @@ build
 #install libtool
 echo "install libtool."
 
-cd /usr/local/src/libtool-2.4.6
+cd $dir/libtool-2.4.6
 ./configure --prefix=/usr/local --enable-ltdl-install
 build
 
@@ -94,7 +94,7 @@ build
 #install mhash
 echo "install mhash."
 
-cd /usr/local/src/mhash-0.9.9.9/
+cd $dir/mhash-0.9.9.9/
 ./configure --prefix=/usr/local
 build
 
@@ -102,7 +102,7 @@ build
 #install mcrypt
 echo "install mcrypt."
 
-cd /usr/local/src/mcrypt-2.6.8/
+cd $dir/mcrypt-2.6.8/
 export LDFLAGS="-L/usr/local/lib -L/usr/lib"
 export CFLAGS="-I/usr/local/include -I/usr/include"
 touch malloc.h
@@ -114,7 +114,7 @@ build
 #install php
 echo "install php."
 
-cd /usr/local/src/php-5.4.45
+cd $dir/php-5.4.45
 ./configure \
 --prefix=/usr/local/php \
 --with-config-file-path=/etc/  \
