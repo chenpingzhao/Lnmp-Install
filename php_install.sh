@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/usr/bin/:/bin
+export PATH=/usr/bin/:/bin:/sbin
 
 dir="/usr/local/src"
 [ -d $dir ] || mkdir -p $dir
@@ -32,6 +32,7 @@ function build()
 	/sbin/ldconfig
 	#sleep 5
     echo -e "\033[32mInstall Success!!!\033[0m\n"
+	showTips
 }
 
 function getfile()
@@ -112,6 +113,7 @@ function installPhp(){
 	export LIBS="-lm -ltermcap -lresolv"
 	export DYLD_LIBRARY_PATH="/lib/:/usr/lib/:/usr/local/lib:/lib64/:/usr/lib64/:/usr/local/lib64"
     export LD_LIBRARY_PATH="/lib/:/usr/lib/:/usr/local/lib:/lib64/:/usr/lib64/:/usr/local/lib64"
+	make clean && make clean all
 	./configure \
 	--prefix=/usr/local/php \
 	--with-config-file-path=/etc/  \
@@ -151,11 +153,16 @@ function installPhp(){
 	--enable-maintainer-zts
 	
 	[ $? -eq 0 ] || exit 1
-	build
-	ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/lib/libmysqlclient.18.dylib
+	make -j8
+	make install
+	#ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/lib/libmysqlclient.18.dylib
 }
 
 function writeConfig(){
+
+PATH=$PATH:$HOME/bin:/usr/local/mysql/bin:/usr/local/mysql/lib:/usr/local/php/bin
+#source /root/.bash_profile
+. ~/.bash_profile
 
 cd $dir/php-5.6.13
 cp ./sapi/fpm/init.d.php-fpm  /etc/init.d/php-fpm
@@ -401,46 +408,58 @@ service php-fpm restart
 
 }
 
-case "$1" in
-	getfile)
-         getfile
-         ;;
-     updateSystem)
-         updateSystem
-         ;;
-     installJpeg)
-         installJpeg
-         ;;
-   
-     installLibpng)
-         installLibpng
-         ;;
+function showTips(){
+echo -e "\e[1;32mUse stdin as a command argument ! \e[0m \e[1;33m";
 
-     installFreetype)
-         installFreetype
-         ;;
-     installLibmcrypt)
-         installLibmcrypt
-         ;;
+cat << EOF 
++---------------------------------------------------------------------------+
+|    1、getfile                                                             |
+|    2、updateSystem                                                        |
+|    3、installJpeg                                                         |
+|    4、installLibpng                                                       |
+|    5、installFreetype                                                     |
+|    6、installLibmcrypt                                                    |
+|    7、installLibtool                                                      |
+|    8、installMhash                                                        |
+|    9、installMcrypt                                                       |
+|    10、installGd2                                                         |
+|    11、installPhp                                                         |
+|    12、writeConfig                                                        |
+|    13、all                                                                | 
++---------------------------------------------------------------------------+
+EOF
 
-     installLibtool)
-        installLibtool
-        ;;
-     installMhash)
-         installMhash
-         ;;
-   
-     installMcrypt)
-         installMcrypt
-         ;;
-      installGd2)
-         installGd2
-     ;;
-      installPhp)
-         installPhp
-     ;;
+echo -e "\e[0m";
+
+}
+
+Usage="getfile|updateSystem|installJpeg|installLibpng|installFreetype|installLibmcrypt|installLibtool|installMhash|installMcrypt|installGd2|installPhp|writeConfig"
+typeset -l input
+
+showTips
+echo -e "\e[42;31m--- please input your select! ---\e[0m\n";
+
+while read input; do
+
+
+case "$input" in
+	h)
+	showTips
+		;;
+	exit)
+		exit 0
+		;;
+	$input)
+		[[ $input =~ ^[0-9]+$ ]] && [[ "$input" -gt 0 && "$input" -lt 14 ]] && {
+		
+			$(echo $Usage | awk -F '|' "BEGIN{ input="$input" } {print \$$input}")
+
+		}  || { echo -e "\n\e[1;31m--- sorry,input error! ---\e[0m\n";  continue;  }
+		;;
      *)
-     echo $"Usage: $0 {getfile|updateSystem|installJpeg|installLibpng|installFreetype|installLibmcrypt|installLibtool|installMhash|installMcrypt|installGd2|installPhp|writeConfig}"
-     exit 1
+		showTips
+     #echo $"Usage: $0 {getfile|updateSystem|installJpeg|installLibpng|installFreetype|installLibmcrypt|installLibtool|installMhash|installMcrypt|installGd2|installPhp|writeConfig}"
 
  esac
+
+done  < "${1:-/dev/stdin}"
