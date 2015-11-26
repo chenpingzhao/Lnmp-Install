@@ -1,14 +1,14 @@
 ###SYSTEM_INIT
 
-  system_boot.sh
+    system_boot.sh
   
 ###MYSQL_INSTALL
 
-  sh mysql_install.sh all
+    sh mysql_install.sh all
   
 ###PHP_INSTALL
 
-  sh php_install.sh all
+    sh php_install.sh all
  
 Installation gd2 need to add a piece of code
 
@@ -35,4 +35,4 @@ void (*data); as new
 
 ###NGINX_INSTALL
 
-  sh nginx_install.sh all
+    sh nginx_install.sh all
