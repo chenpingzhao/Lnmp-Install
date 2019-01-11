@@ -30,10 +30,11 @@ In this file ./gd_io.h
 
     void (*gd_free) (struct gdIOCtx *); 
 
-    void (*data);                                                  
+    void (*data);     
+   
   }
-void (*data); as new
-
+  
+  void (*data); as new
 
 ```
 ### NGINX_INSTALL
