@@ -1,12 +1,12 @@
-###SYSTEM_INIT
+### SYSTEM_INIT
 
     system_boot.sh
   
-###MYSQL_INSTALL
+### MYSQL_INSTALL
 
     sh mysql_install.sh all
   
-###PHP_INSTALL
+### PHP_INSTALL
 
     sh php_install.sh all
  
@@ -33,6 +33,6 @@ In this file ./gd_io.h
   }
 void (*data); as new
 
-###NGINX_INSTALL
+### NGINX_INSTALL
 
     sh nginx_install.sh all
